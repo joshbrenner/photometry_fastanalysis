@@ -5,11 +5,11 @@ function mice_arr = photometry_allmice_analyze_trials_Hemo_pretrialBL
 
 path = 'C:\Users\Tuica\Documents\MATLAB\photometry processing\Single_Fiber_Josh-221006-121345\';
 % names = {'m3_day1','m3_day2a','m3_day2b','m4_day1','m4_day2','m735_day1','m735_day2','m772_day2a','m772_day2b'};
-% onset_cell = [1,2537,24235,102519,2073,22786,1288,487,7284];
+% onset_cell = [1,2537,24235,102519,2073,22786,1288,487,7284]; 
 % offset_cell = [3973520,485159,1801190,3649790,2792470,5874560,1466900,2792470,1115310];
 
-names = {'m4_day1','m4_day2','m735_day1','m735_day2','m772_day2a','m772_day2b'};
-onset_cell = [102519,2073,22786,1288,487,7284];
+names = {'m4_day1','m4_day2','m735_day1','m735_day2','m772_day2a','m772_day2b'}; %different sessions and mice
+onset_cell = [102519,2073,22786,1288,487,7284];%This device has limited digital inputs so we have to mark our onset and offset manually
 offset_cell = [3649790,2792470,5874560,1466900,2792470,1115310];
 mice_array = cell([1,length(names)]);
 
@@ -33,7 +33,7 @@ end
     photLim = 2575;
     
     ds_rate =60;
-    stim_len_lim = (Fs*15)/ds_rate; %Any stims longer than 30 seconds don't have a replay, so we discard them (after downsampling, our signal is at 50 hz)
+    stim_len_lim = (Fs*15)/ds_rate; %Any stims longer than 30 seconds don't have a replay, so we discard them 
     
     
     sig470 = photometry_data.streams.x470A.data(onset:offset); %from calcium signal
@@ -46,7 +46,7 @@ end
     sig_diode = photometry_data.streams.Wav2.data(onset:offset); %from photodiode (ie trial onset/offset)
     sig_diode = nanmean(reshape([sig_diode(:); nan(mod(-numel(sig_diode),ds_rate),1)],ds_rate,[])); %downsample by a factor of ds_rate to smooth some of that noise.
     
-    %% Subtract hemodynamic signal - not really sure what to do with this at the moment
+    %% Subtract hemodynamic signal 
     controlFit = [];
     binind = ceil(linspace(1,length(sig470),10));
     binind(end) = binind(end)+1;
@@ -86,7 +86,7 @@ end
     stim_len(end-1:end)= [];
 
 
-    if exp == 10
+    if exp == 10 %This experiment has some issues detecting trials without a replay. We go in and identify them manually.
     rem_mat = [37 38 43 44 47 48 51 54 55 68 73 84 85 86 111 116 119 120 173 194 195 196 201 204 239 270 277 294 313 324 325 344 345 356];
     stim_len(rem_mat) = [];
     stimLimits(:,rem_mat) = [];
@@ -115,9 +115,7 @@ end
     stimLimits(:,stim_len>=stim_len_lim*1.3) = []; %gets rid of most too-long trials
     stim_len(stim_len>=stim_len_lim*1.3) = []; 
     
-    %We need to be a bit trickier to make sure we get all too-long trials --
-    %what if we have a pair right on the edge, but there is a couple of frames
-    %of noise? We would end up frame-shifted which is bad.
+
     stim_removal = stim_len >= stim_len_lim;
     
     
@@ -285,9 +283,6 @@ x = movmean(mm_sort,10,'omitnan');
     mice.sortselff = sort_selff;
     mice.sortexof = sort_exof;
     
-    if exp == 8
-       'hi'
-    end
     
     % 
     % figure
