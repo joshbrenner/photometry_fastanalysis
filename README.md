@@ -15,3 +15,5 @@ The code defines a function named analyzethosemice that takes in the experiment 
 The code then calls the analyzethosemice function for each mouse and stores the data for each mouse in the mice array.
 
 Overall, this code is useful for preprocessing photometry data from mice for experiments with animal generated motion described in Figure 6 of Brenner et al. 2023 and extracting relevant signals for further analysis. 
+
+This code is provided by Joshua Brenner and Sebastian Zahler.
